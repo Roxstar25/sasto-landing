@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipelined - Job Application Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Pipelined</h1>
+            <div id="stats-container" class="stats" aria-live="polite">
+                <!-- Populated via JS: X tracked · Y interviews · Z offers -->
+            </div>
+        </div>
+    </header>
+
+    <main class="kanban-board">
+        <!-- Saved Column -->
+        <section class="kanban-column">
+            <header class="column-header">
+                <h2>Saved</h2>
+                <button class="add-btn" data-status="saved" aria-label="Add job to Saved">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </header>
+            <div class="column-dropzone" data-status="saved">
+                <!-- Cards injected here -->
+            </div>
+        </section>
+
+        <!-- Applied Column -->
+        <section class="kanban-column">
+            <header class="column-header">
+                <h2>Applied</h2>
+                <button class="add-btn" data-status="applied" aria-label="Add job to Applied">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </header>
+            <div class="column-dropzone" data-status="applied"></div>
+        </section>
+
+        <!-- Interview Column -->
+        <section class="kanban-column">
+            <header class="column-header">
+                <h2>Interview</h2>
+                <button class="add-btn" data-status="interview" aria-label="Add job to Interview">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </header>
+            <div class="column-dropzone" data-status="interview"></div>
+        </section>
+
+        <!-- Offer Column -->
+        <section class="kanban-column">
+            <header class="column-header">
+                <h2>Offer</h2>
+                <button class="add-btn" data-status="offer" aria-label="Add job to Offer">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </header>
+            <div class="column-dropzone" data-status="offer"></div>
+        </section>
+
+        <!-- Rejected Column -->
+        <section class="kanban-column">
+            <header class="column-header">
+                <h2>Rejected</h2>
+                <button class="add-btn" data-status="rejected" aria-label="Add job to Rejected">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </header>
+            <div class="column-dropzone" data-status="rejected"></div>
+        </section>
+    </main>
+
+    <!-- Native HTML Dialog for Add/Edit -->
+    <dialog id="job-modal" class="modal">
+        <form id="job-form">
+            <header class="modal-header">
+                <h2 id="modal-title">Add Job</h2>
+                <button type="button" class="close-btn" id="close-modal-btn" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+            
+            <div class="modal-body">
+                <!-- Hidden fields for tracking edits and destination column -->
+                <input type="hidden" id="job-id">
+                <input type="hidden" id="job-target-status">
+
+                <div class="form-group">
+                    <label for="company">Company <span class="required">*</span></label>
+                    <input type="text" id="company" required placeholder="e.g. Acme Corp">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role <span class="required">*</span></label>
+                    <input type="text" id="role" required placeholder="e.g. Frontend Developer">
+                </div>
+
+                <div class="form-group">
+                    <label for="url">Job Posting URL</label>
+                    <input type="url" id="url" placeholder="https://...">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="salary-min">Salary Min</label>
+                        <input type="number" id="salary-min" min="0" step="1000" placeholder="e.g. 80000">
+                    </div>
+                    <div class="form-group">
+                        <label for="salary-max">Salary Max</label>
+                        <input type="number" id="salary-max" min="0" step="1000" placeholder="e.g. 120000">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="4" placeholder="Recruiter contact, tech stack, etc."></textarea>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Job</button>
+            </footer>
+        </form>
+    </dialog>
+
+    <script src="app.js"></script>
+</body>
+</html>
